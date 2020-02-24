@@ -1,5 +1,5 @@
-class SessionController {
-    async create({ request, auth }) {
+class LoginController {
+    async login({ request, auth }) {
         const { email, password } = request.all();
 
         const token = await auth.attempt(email, password);
@@ -8,4 +8,4 @@ class SessionController {
     }
 }
 
-module.exports = SessionController;
+module.exports = LoginController;

@@ -20,6 +20,7 @@ class PropertyController {
         const { latitude, longitude } = request.all();
 
         const properties = Property.query()
+            .with('images')
             .nearBy(latitude, longitude, 10)
             .fetch();
 
@@ -34,7 +35,7 @@ class PropertyController {
      * @param {Request} ctx.request
      * @param {Response} ctx.response
      */
-    async store({ request, response }) {
+    async store({ auth, request, response }) {
         const { id } = auth.user;
         const data = request.only([
             'title',
@@ -100,7 +101,7 @@ class PropertyController {
      * @param {Request} ctx.request
      * @param {Response} ctx.response
      */
-    async destroy({ params, request, response }) {
+    async destroy({ auth, params, request, response }) {
         const property = await Property.findOrFail(params.id);
 
         if (property.user_id !== auth.user.id) {
@@ -108,7 +109,7 @@ class PropertyController {
         }
 
         await property.delete();
-        return response.status(201);
+        return response.status(201).send({ message: 'Property Deleted' });
     }
 }
 
