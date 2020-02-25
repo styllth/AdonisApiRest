@@ -17,14 +17,20 @@ class PropertyController {
      * @param {View} ctx.view
      */
     async index({ request, response, view }) {
-        const { latitude, longitude } = request.all();
+        try {
+            const { latitude, longitude } = request.all();
 
-        const properties = Property.query()
-            .with('images')
-            .nearBy(latitude, longitude, 10)
-            .fetch();
+            const properties = Property.query()
+                .with('images')
+                .nearBy(latitude, longitude, 10)
+                .fetch();
 
-        return properties;
+            return properties;
+        } catch (error) {
+            return response
+                .status(400)
+                .send({ error: 'Falha ao listar os imóveis!' });
+        }
     }
 
     /**
@@ -36,18 +42,24 @@ class PropertyController {
      * @param {Response} ctx.response
      */
     async store({ auth, request, response }) {
-        const { id } = auth.user;
-        const data = request.only([
-            'title',
-            'address',
-            'latitude',
-            'longitude',
-            'price',
-        ]);
+        try {
+            const { id } = auth.user;
+            const data = request.only([
+                'title',
+                'address',
+                'latitude',
+                'longitude',
+                'price',
+            ]);
 
-        const property = await Property.create({ ...data, user_id: id });
+            const property = await Property.create({ ...data, user_id: id });
 
-        return property;
+            return property;
+        } catch (error) {
+            return response
+                .status(400)
+                .send({ error: 'Falha ao cadastrar o imóvel!' });
+        }
     }
 
     /**
@@ -60,11 +72,17 @@ class PropertyController {
      * @param {View} ctx.view
      */
     async show({ params, request, response, view }) {
-        const property = await Property.findOrFail(params.id);
+        try {
+            const property = await Property.findOrFail(params.id);
 
-        await property.load('images');
+            await property.load('images');
 
-        return property;
+            return property;
+        } catch (error) {
+            return response
+                .status(400)
+                .send({ error: 'Falha ao exibir o imóvel!' });
+        }
     }
 
     /**
@@ -76,21 +94,27 @@ class PropertyController {
      * @param {Response} ctx.response
      */
     async update({ params, request, response }) {
-        const property = await Property.findOrFail(params.id);
+        try {
+            const property = await Property.findOrFail(params.id);
 
-        const data = request.only([
-            'title',
-            'address',
-            'latitude',
-            'longitude',
-            'price',
-        ]);
+            const data = request.only([
+                'title',
+                'address',
+                'latitude',
+                'longitude',
+                'price',
+            ]);
 
-        property.merge(data);
+            property.merge(data);
 
-        await property.save();
+            await property.save();
 
-        return property;
+            return property;
+        } catch (error) {
+            return response
+                .status(400)
+                .send({ error: 'Falha ao atualizar o imóvel!' });
+        }
     }
 
     /**
@@ -102,14 +126,20 @@ class PropertyController {
      * @param {Response} ctx.response
      */
     async destroy({ auth, params, request, response }) {
-        const property = await Property.findOrFail(params.id);
+        try {
+            const property = await Property.findOrFail(params.id);
 
-        if (property.user_id !== auth.user.id) {
-            return response.status(401).send({ error: 'Not authorized' });
+            if (property.user_id !== auth.user.id) {
+                return response.status(401).send({ error: 'Not authorized' });
+            }
+
+            await property.delete();
+            return response.status(201).send({ message: 'Property Deleted' });
+        } catch (error) {
+            return response
+                .status(400)
+                .send({ error: 'Falha ao excluir o imóvel!' });
         }
-
-        await property.delete();
-        return response.status(201).send({ message: 'Property Deleted' });
     }
 }
 

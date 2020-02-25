@@ -16,6 +16,7 @@
     "license": "UNLICENSED",
     "private": true,
     "dependencies": {
+        "@adonisjs/ace": "^5.0.8",
         "@adonisjs/auth": "^3.0.7",
         "@adonisjs/bodyparser": "^2.0.5",
         "@adonisjs/cors": "^1.0.7",
@@ -27,7 +28,6 @@
         "pg": "^7.18.1"
     },
     "devDependencies": {
-        "@adonisjs/ace": "^5.0.8",
         "eslint": "^6.8.0",
         "eslint-config-airbnb-base": "^14.0.0",
         "eslint-config-prettier": "^6.10.0",

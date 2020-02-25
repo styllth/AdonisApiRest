@@ -5,6 +5,11 @@ const Model = use('Model');
 const Hash = use('Hash');
 
 class User extends Model {
+    // campos não retornados nos sql
+    static get hidden() {
+        return ['password'];
+    }
+
     static boot() {
         super.boot();
 

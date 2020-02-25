@@ -14,15 +14,17 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route');
 
-Route.get('/', () => {
-    return { greeting: 'Hello world in JSON' };
-});
+Route.get('/', 'HomeController.index');
 
-Route.post('/users', 'UserController.create');
+Route.post('/register', 'UserController.store');
 
 Route.post('/login', 'LoginController.login');
 
 Route.resource('properties', 'PropertyController')
+    .apiOnly()
+    .middleware('auth');
+
+Route.resource('users', 'UserController')
     .apiOnly()
     .middleware('auth');
 
